@@ -8,7 +8,7 @@ from ui.test_config import render_test_config_page
 from ui.run_tests import render_run_tests_page, run_all_tests
 from ui.results import render_results_page
 
-# Import catalog
+# Import updated catalog
 from catalog.test_catalog import load_test_catalog
 
 # Ensure NLTK dependencies are downloaded
