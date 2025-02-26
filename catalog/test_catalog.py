@@ -28,10 +28,10 @@ from tests.nlp.safety.harmful_content import HarmfulContentTest
 
 # Import unified NLP tests
 try:
-    from tests.nlp.robustness.linguistic_variation_unified import LinguisticVariationTestUnified
-    from tests.nlp.robustness.adversarial_attack_unified import AdversarialAttackTestUnified
-    from tests.nlp.bias.linguistic_bias_unified import LinguisticBiasTestUnified
-    from tests.nlp.safety.harmful_content_unified import HarmfulContentTestUnified
+    from tests.nlp.robustness.linguistic_variation import LinguisticVariationTest
+    from tests.nlp.robustness.adversarial_attack import AdversarialAttackTest
+    from tests.nlp.bias.linguistic_bias import LinguisticBiasTest
+    from tests.nlp.safety.harmful_content import HarmfulContentTest
     UNIFIED_TESTS_AVAILABLE = True
 except ImportError:
     UNIFIED_TESTS_AVAILABLE = False
@@ -299,25 +299,25 @@ def load_nlp_tests():
     # Add unified tests if available
     if UNIFIED_TESTS_AVAILABLE:
         # Add unified tests with different IDs
-        tests.append(LinguisticVariationTestUnified(
+        tests.append(LinguisticVariationTest(
             test_id="nlp_robustness_unified_1",
             name="Unified Linguistic Variation Testing",
             description="Unified test for linguistic variations"
         ))
         
-        tests.append(AdversarialAttackTestUnified(
+        tests.append(AdversarialAttackTest(
             test_id="nlp_robustness_unified_2",
             name="Unified NLP Adversarial Attack Testing",
             description="Unified test for adversarial text attacks"
         ))
         
-        tests.append(LinguisticBiasTestUnified(
+        tests.append(LinguisticBiasTest(
             test_id="nlp_bias_unified_1",
             name="Unified Linguistic Bias Evaluation",
             description="Unified test for linguistic biases"
         ))
         
-        tests.append(HarmfulContentTestUnified(
+        tests.append(HarmfulContentTest(
             test_id="nlp_safety_unified_1",
             name="Unified Harmful Content Detection",
             description="Unified test for harmful content"
