@@ -1,6 +1,7 @@
 import streamlit as st
 import torch
-from transformers import AutoModelForSequenceClassification, AutoTokenizer
+import random
+from transformers import AutoModelForSequenceClassification, AutoTokenizer, pipeline
 from typing import Dict, List, Any
 import numpy as np
 
@@ -68,6 +69,20 @@ class ModelAdapter:
         """
         try:
             if self.model is None:
+                # For text generation models, return mock generation
+                if self.model_type == "text-generation":
+                    mock_responses = [
+                        "This is a sample generated text that demonstrates the model's capability to follow instructions.",
+                        "As requested, I've generated a response to your prompt. This is simulated text for testing purposes.",
+                        "Here's a mock response to test the text generation capabilities of this system."
+                    ]
+                    generation = random.choice(mock_responses)
+                    return {
+                        "generation": generation,
+                        "input_length": len(input_data),
+                        "tokens_length": len(input_data.split())
+                    }
+                
                 # Return mock prediction if no model is initialized
                 probs = np.array([[0.6, 0.4]], dtype=np.float32)  # Mock probabilities with explicit dtype
                 return {
@@ -85,6 +100,30 @@ class ModelAdapter:
                         st.warning(f"Input is very long ({len(input_data)} chars). Truncating to ensure model compatibility.")
                         input_data = input_data[:1000]
                     
+                    # Special handling for text generation models
+                    if self.model_type.lower() in ["text generation", "chat completion", 
+                                                  "instruction following", "creative writing", 
+                                                  "conversational ai", "content generation"]:
+                        # Get generated text from the pipeline
+                        gen_outputs = self.pipeline(input_data, return_full_text=False)
+                        
+                        # Extract generated text
+                        if isinstance(gen_outputs, list) and len(gen_outputs) > 0:
+                            if isinstance(gen_outputs[0], dict) and 'generated_text' in gen_outputs[0]:
+                                generation = gen_outputs[0]['generated_text']
+                            else:
+                                generation = str(gen_outputs[0])
+                        else:
+                            generation = "Generated text placeholder"
+                        
+                        return {
+                            "generation": generation,
+                            "input_length": len(input_data),
+                            "tokens_length": len(input_data.split()),
+                            "prediction": np.array([[0.9, 0.1]], dtype=np.float32)  # For compatibility
+                        }
+                    
+                    # Standard NLP pipeline processing
                     pipeline_result = self.pipeline(input_data, truncation=True, max_length=self.max_length)
                     
                     # Format the result based on pipeline type
@@ -223,6 +262,10 @@ class ModelCategories:
             "Question Answering", "Zero-Shot Classification", "Translation",
             "Summarization", "Feature Extraction", "Text Generation",
             "Text2Text Generation", "Fill-Mask", "Sentence Similarity"
+        ],
+        "Text Generation": [
+            "Text Generation", "Chat Completion", "Instruction Following", 
+            "Creative Writing", "Conversational AI", "Content Generation"
         ],
         "Audio": [
             "Text-to-Speech", "Text-to-Audio", "Automatic Speech Recognition",

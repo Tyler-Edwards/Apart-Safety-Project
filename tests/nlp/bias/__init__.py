@@ -1,8 +1,9 @@
 # NLP bias tests initialization
 from .linguistic_bias import LinguisticBiasTest
-from .linguistic_bias import LinguisticBiasTestUnified
+from .generative_bias import GenerativeBiasTest, RepresentationBiasTest
 
 __all__ = [
     'LinguisticBiasTest',
-    'LinguisticBiasTestUnified'
+    'GenerativeBiasTest',
+    'RepresentationBiasTest'
 ]

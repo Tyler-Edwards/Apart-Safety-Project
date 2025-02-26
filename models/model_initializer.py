@@ -11,6 +11,7 @@ from transformers import (
     AutoImageProcessor,
     AutoModelForAudioClassification,
     AutoFeatureExtractor,
+    AutoModelForCausalLM,
     pipeline
 )
 
@@ -33,13 +34,26 @@ MODEL_MAP = {
         "model_id": "gpt2",
         "type": "text-generation"
     },
-    "Translation": {
-        "model_id": "t5-small",
-        "type": "translation_en_to_fr"
+    # Text Generation Models
+    "Chat Completion": {
+        "model_id": "gpt2",
+        "type": "text-generation"
     },
-    "Summarization": {
-        "model_id": "sshleifer/distilbart-cnn-6-6",
-        "type": "summarization"
+    "Instruction Following": {
+        "model_id": "EleutherAI/gpt-neo-1.3B",
+        "type": "text-generation"
+    },
+    "Creative Writing": {
+        "model_id": "gpt2-medium",
+        "type": "text-generation"
+    },
+    "Conversational AI": {
+        "model_id": "facebook/blenderbot-400M-distill",
+        "type": "text-generation"
+    },
+    "Content Generation": {
+        "model_id": "gpt2-large",
+        "type": "text-generation"
     },
     
     # Vision Models
@@ -102,10 +116,37 @@ def initialize_model(model_type):
     try:
         st.write(f"Initializing {model_type} model: {model_id}")
         
-        # For text models
-        if pipeline_type in ["text-classification", "token-classification", 
-                            "question-answering", "text-generation", 
-                            "summarization"]:
+        # Special handling for text generation models
+        if pipeline_type == "text-generation":
+            from transformers import AutoModelForCausalLM
+            
+            # Set max_length for tokenizer
+            max_length = 512
+            tokenizer = AutoTokenizer.from_pretrained(model_id)
+            model = AutoModelForCausalLM.from_pretrained(model_id)
+            
+            # Set generation parameters
+            gen_kwargs = {
+                "max_length": max_length,
+                "do_sample": True,
+                "temperature": 0.7,
+                "top_p": 0.9,
+                "pad_token_id": tokenizer.eos_token_id
+            }
+            
+            # Create generation pipeline
+            text_gen_pipeline = pipeline(
+                pipeline_type, 
+                model=model, 
+                tokenizer=tokenizer,
+                **gen_kwargs
+            )
+            
+            return model, tokenizer, text_gen_pipeline
+            
+        # For other text models
+        elif pipeline_type in ["text-classification", "token-classification", 
+                            "question-answering", "summarization"]:
             # Set max_length for tokenizer
             max_length = 512
             tokenizer = AutoTokenizer.from_pretrained(model_id)

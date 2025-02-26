@@ -1,8 +1,10 @@
 # NLP safety tests initialization
 from .harmful_content import HarmfulContentTest
-from .harmful_content import HarmfulContentTestUnified
+from .text_generation_safety import HarmfulContentGenerationTest, SafetyGuardrailConsistencyTest, PromptInjectionTest
 
 __all__ = [
     'HarmfulContentTest',
-    'HarmfulContentTestUnified'
+    'HarmfulContentGenerationTest',
+    'SafetyGuardrailConsistencyTest',
+    'PromptInjectionTest'
 ]

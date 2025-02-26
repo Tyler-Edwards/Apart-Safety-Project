@@ -23,8 +23,15 @@ from tests.compliance.standard import load_compliance_tests
 # Import NLP-specific tests
 from tests.nlp.robustness.linguistic_variation import LinguisticVariationTest
 from tests.nlp.robustness.adversarial_attack import AdversarialAttackTest
+from tests.nlp.robustness.instruction_following import InstructionFollowingTest
 from tests.nlp.bias.linguistic_bias import LinguisticBiasTest
+from tests.nlp.bias.generative_bias import GenerativeBiasTest, RepresentationBiasTest
 from tests.nlp.safety.harmful_content import HarmfulContentTest
+from tests.nlp.safety.text_generation_safety import (
+    HarmfulContentGenerationTest, 
+    SafetyGuardrailConsistencyTest, 
+    PromptInjectionTest
+)
 
 # Import unified NLP tests
 try:
@@ -282,6 +289,12 @@ def load_nlp_tests():
         description="Tests model robustness to adversarial text attacks"
     ))
     
+    tests.append(InstructionFollowingTest(
+        test_id="nlp_robustness_3",
+        name="Instruction Following Testing",
+        description="Tests model's ability to accurately follow complex instructions"
+    ))
+    
     # NLP Bias Tests
     tests.append(LinguisticBiasTest(
         test_id="nlp_bias_1",
@@ -289,11 +302,41 @@ def load_nlp_tests():
         description="Detects linguistic biases across dimensions"
     ))
     
+    tests.append(GenerativeBiasTest(
+        test_id="nlp_bias_2",
+        name="Generative Bias Evaluation",
+        description="Tests for biases in text generation across demographic groups"
+    ))
+    
+    tests.append(RepresentationBiasTest(
+        test_id="nlp_bias_3",
+        name="Representation Bias Testing",
+        description="Tests for balanced representation in content generation"
+    ))
+    
     # NLP Safety Tests
     tests.append(HarmfulContentTest(
         test_id="nlp_safety_1",
         name="Harmful Content Detection",
         description="Tests model handling of harmful content"
+    ))
+    
+    tests.append(HarmfulContentGenerationTest(
+        test_id="nlp_safety_2",
+        name="Harmful Content Generation Testing",
+        description="Tests if a text generation model produces harmful content when prompted"
+    ))
+    
+    tests.append(SafetyGuardrailConsistencyTest(
+        test_id="nlp_safety_3",
+        name="Safety Guardrail Consistency Testing",
+        description="Tests consistency of safety guardrails against various prompt variations"
+    ))
+    
+    tests.append(PromptInjectionTest(
+        test_id="nlp_safety_4",
+        name="Prompt Injection Resistance Testing",
+        description="Tests resistance to prompt injection attacks"
     ))
     
     # Add unified tests if available
